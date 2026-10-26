@@ -830,12 +830,12 @@ export function CanvasWorkspace({
 
       {/* Render Elements in Layer Stack */}
       {layers
-        .filter(l => l.visible !== false)
+        .filter(l => l && l.id && l.visible !== false)
         .map((layer, index) => {
-          const isSelected = selectedLayerIds.includes(layer.id);
+          const isSelected = selectedLayerIds ? selectedLayerIds.includes(layer.id) : false;
           const isPrimary = layer.id === primarySelectedId;
-          const isDraggingThis = (dragState.isDragging && (dragState.layerId === layer.id || selectedLayerIds.includes(layer.id)));
-          const isResizingThis = (resizeState.isResizing && resizeState.layerId === layer.id);
+          const isDraggingThis = (dragState?.isDragging && (dragState.layerId === layer.id || selectedLayerIds?.includes(layer.id)));
+          const isResizingThis = (resizeState?.isResizing && resizeState.layerId === layer.id);
 
           // Authentic Layer Stacking Order:
           // Visual stacking matches layers array position (index + 2) exactly.

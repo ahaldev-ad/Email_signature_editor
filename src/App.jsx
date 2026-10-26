@@ -85,20 +85,23 @@ export default function App() {
       const saved = localStorage.getItem(STORAGE_KEY) || localStorage.getItem(LEGACY_STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (parsed.canvasConfig && parsed.layers) {
+        if (parsed?.canvasConfig && Array.isArray(parsed?.layers) && parsed.layers.length > 0) {
           setDocName(parsed.docName || 'Saved Signature');
           setCanvasConfig(parsed.canvasConfig);
-          const sanitized = parsed.layers.map(l => {
-            const isBg = l.type === 'shape' && (l.width >= 400 || l.id.includes('bg'));
+          const sanitized = parsed.layers.filter(l => l && l.id).map(l => {
+            const isBg = l.type === 'shape' && (l.width >= 400 || (typeof l.id === 'string' && l.id.includes('bg')));
             return isBg ? { ...l, locked: true } : l;
           });
-          setLayers(sanitized);
-          if (sanitized[1]) setSelectedLayerIds([sanitized[1].id]);
+          if (sanitized.length > 0) {
+            setLayers(sanitized);
+            if (sanitized[1]) setSelectedLayerIds([sanitized[1].id]);
+          }
           if (parsed.variables) setVariables(parsed.variables);
         }
       }
     } catch (e) {
       console.warn('Could not load from localStorage', e);
+      setLayers(initialTemplate.layers);
     }
   }, []);
 

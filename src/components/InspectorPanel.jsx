@@ -6,7 +6,7 @@ import {
   Layers as LayersIcon, AlignStartVertical, AlignCenterVertical, AlignEndVertical,
   Copy, Trash2, QrCode, Star, Activity, Feather,
   ChevronUp, ChevronDown, ChevronsUp, ChevronsDown,
-  Mail, Phone, MessageCircle, MapPin, Globe, Smartphone, Calendar, Building2, Clock
+  Mail
 } from 'lucide-react';
 import {
   EMAIL_SAFE_FONTS,
@@ -25,6 +25,12 @@ const SAMPLE_AVATARS = [
   'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=300&auto=format&fit=crop&q=80',
   'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=300&auto=format&fit=crop&q=80'
 ];
+
+// Safe helper to strip existing icon prefix without combining regex issues
+const stripContactPrefix = (str = '') => {
+  if (!str) return '';
+  return str.replace(/^(✉️|📞|💬|📍|🌐|📱|📅|🏢|🕒)\s*/, '');
+};
 
 export function InspectorPanel({
   layer,
@@ -573,8 +579,7 @@ export function InspectorPanel({
                 className="btn-secondary"
                 style={{ fontSize: 10, padding: '4px 6px', justifyContent: 'center' }}
                 onClick={() => {
-                  const curr = layer.text || '';
-                  const clean = curr.replace(/^[✉️📞💬📍🌐📱📅🏢🕒]\s*/u, '');
+                  const clean = stripContactPrefix(layer.text);
                   onUpdateLayer(layer.id, {
                     text: `✉️ ${clean || '{Email}'}`,
                     linkUrl: layer.linkUrl || 'mailto:{Email}'
@@ -589,8 +594,7 @@ export function InspectorPanel({
                 className="btn-secondary"
                 style={{ fontSize: 10, padding: '4px 6px', justifyContent: 'center' }}
                 onClick={() => {
-                  const curr = layer.text || '';
-                  const clean = curr.replace(/^[✉️📞💬📍🌐📱📅🏢🕒]\s*/u, '');
+                  const clean = stripContactPrefix(layer.text);
                   onUpdateLayer(layer.id, {
                     text: `📞 ${clean || '{Phone}'}`,
                     linkUrl: layer.linkUrl || 'tel:{Phone}'
@@ -605,8 +609,7 @@ export function InspectorPanel({
                 className="btn-secondary"
                 style={{ fontSize: 10, padding: '4px 6px', justifyContent: 'center' }}
                 onClick={() => {
-                  const curr = layer.text || '';
-                  const clean = curr.replace(/^[✉️📞💬📍🌐📱📅🏢🕒]\s*/u, '');
+                  const clean = stripContactPrefix(layer.text);
                   onUpdateLayer(layer.id, {
                     text: `💬 ${clean || 'Chat on WhatsApp'}`,
                     linkUrl: layer.linkUrl || 'https://wa.me/1234567890'
@@ -621,8 +624,7 @@ export function InspectorPanel({
                 className="btn-secondary"
                 style={{ fontSize: 10, padding: '4px 6px', justifyContent: 'center' }}
                 onClick={() => {
-                  const curr = layer.text || '';
-                  const clean = curr.replace(/^[✉️📞💬📍🌐📱📅🏢🕒]\s*/u, '');
+                  const clean = stripContactPrefix(layer.text);
                   onUpdateLayer(layer.id, {
                     text: `📍 ${clean || '{Address}'}`,
                     linkUrl: layer.linkUrl || 'https://maps.google.com/?q={Address}'
@@ -637,8 +639,7 @@ export function InspectorPanel({
                 className="btn-secondary"
                 style={{ fontSize: 10, padding: '4px 6px', justifyContent: 'center' }}
                 onClick={() => {
-                  const curr = layer.text || '';
-                  const clean = curr.replace(/^[✉️📞💬📍🌐📱📅🏢🕒]\s*/u, '');
+                  const clean = stripContactPrefix(layer.text);
                   onUpdateLayer(layer.id, {
                     text: `🌐 ${clean || '{Website}'}`,
                     linkUrl: layer.linkUrl || '{Website}'
@@ -653,8 +654,7 @@ export function InspectorPanel({
                 className="btn-secondary"
                 style={{ fontSize: 10, padding: '4px 6px', justifyContent: 'center' }}
                 onClick={() => {
-                  const curr = layer.text || '';
-                  const clean = curr.replace(/^[✉️📞💬📍🌐📱📅🏢🕒]\s*/u, '');
+                  const clean = stripContactPrefix(layer.text);
                   onUpdateLayer(layer.id, {
                     text: `📱 ${clean || '{Mobile}'}`,
                     linkUrl: layer.linkUrl || 'tel:{Mobile}'
@@ -669,8 +669,7 @@ export function InspectorPanel({
                 className="btn-secondary"
                 style={{ fontSize: 10, padding: '4px 6px', justifyContent: 'center' }}
                 onClick={() => {
-                  const curr = layer.text || '';
-                  const clean = curr.replace(/^[✉️📞💬📍🌐📱📅🏢🕒]\s*/u, '');
+                  const clean = stripContactPrefix(layer.text);
                   onUpdateLayer(layer.id, {
                     text: `📅 ${clean || 'Book 15-Min Call'}`,
                     linkUrl: layer.linkUrl || 'https://calendly.com'
@@ -685,8 +684,7 @@ export function InspectorPanel({
                 className="btn-secondary"
                 style={{ fontSize: 10, padding: '4px 6px', justifyContent: 'center' }}
                 onClick={() => {
-                  const curr = layer.text || '';
-                  const clean = curr.replace(/^[✉️📞💬📍🌐📱📅🏢🕒]\s*/u, '');
+                  const clean = stripContactPrefix(layer.text);
                   onUpdateLayer(layer.id, {
                     text: `🏢 ${clean || '{Company}'}`
                   });
@@ -700,8 +698,7 @@ export function InspectorPanel({
                 className="btn-secondary"
                 style={{ fontSize: 10, padding: '4px 6px', justifyContent: 'center' }}
                 onClick={() => {
-                  const curr = layer.text || '';
-                  const clean = curr.replace(/^[✉️📞💬📍🌐📱📅🏢🕒]\s*/u, '');
+                  const clean = stripContactPrefix(layer.text);
                   onUpdateLayer(layer.id, {
                     text: `🕒 ${clean || 'Mon - Fri 9:00 AM - 6:00 PM'}`
                   });
