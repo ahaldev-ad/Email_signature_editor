@@ -332,7 +332,7 @@ export function compileSignatureToHtml(canvasConfig, layers, variables = {}, opt
   // Build the outer table container
   const htmlBody = `
 <!-- SIGNATURE START -->
-<table class="signacraft-root" cellpadding="0" cellspacing="0" border="0" style="font-family: Arial, Helvetica, sans-serif; font-size: 13px; line-height: 1.4; border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; max-width: ${width}px; background-color: ${bgColor}; border: ${borderWidth}px solid ${borderColor}; border-radius: ${borderRadius}px;">
+<table class="sigstudio-root signacraft-root" cellpadding="0" cellspacing="0" border="0" style="font-family: Arial, Helvetica, sans-serif; font-size: 13px; line-height: 1.4; border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; max-width: ${width}px; background-color: ${bgColor}; border: ${borderWidth}px solid ${borderColor}; border-radius: ${borderRadius}px;">
   <tr>
     <td style="padding: 16px 20px;">
       <table cellpadding="0" cellspacing="0" border="0" style="border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;">
@@ -409,7 +409,7 @@ export function compileSignatureToHtml(canvasConfig, layers, variables = {}, opt
     table { border-collapse: collapse; }
     img { -ms-interpolation-mode: bicubic; border: 0; outline: none; }
     @media only screen and (max-width: 480px) {
-      .signacraft-root { width: 100% !important; max-width: 100% !important; }
+      .sigstudio-root, .signacraft-root { width: 100% !important; max-width: 100% !important; }
     }
   </style>
 </head>

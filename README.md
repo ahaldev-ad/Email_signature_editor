@@ -1,6 +1,6 @@
-# SignaCraft PRO — Advanced Email Signature Studio
+# SigStudio PRO — Advanced Email Signature Studio
 
-SignaCraft PRO is a Photoshop-grade, graphical email signature creation suite built with React and Vite. It generates 100% compliant, table-based inline-CSS HTML email signatures compatible with Gmail, Apple Mail, Outlook (Windows & Mac), and mobile mail clients.
+SigStudio PRO is a Photoshop-grade, graphical email signature creation suite built with React and Vite. It generates 100% compliant, table-based inline-CSS HTML email signatures compatible with Gmail, Apple Mail, Outlook (Windows & Mac), and mobile mail clients.
 
 ---
 

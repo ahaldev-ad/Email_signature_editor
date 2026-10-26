@@ -85,9 +85,9 @@ export function Toolbar({
     <header className="top-toolbar">
       {/* 1. Left Section: Brand & Document Name */}
       <div className="brand-section">
-        <div className="brand-logo" title="SignaCraft Advanced Email Signature Studio">
+        <div className="brand-logo" title="SigStudio Advanced Email Signature Studio">
           <div className="brand-logo-mark">S</div>
-          <span className="brand-title">SignaCraft</span>
+          <span className="brand-title">SigStudio</span>
           <span className="brand-badge">PRO</span>
         </div>
 

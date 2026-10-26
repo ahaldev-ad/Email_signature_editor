@@ -24,7 +24,8 @@ import {
 } from './utils/compiler';
 import { Sliders, Layers as LayersIcon, PanelRightClose, PanelRightOpen } from 'lucide-react';
 
-const STORAGE_KEY = 'signacraft_saved_project_v1';
+const STORAGE_KEY = 'sigstudio_saved_project_v1';
+const LEGACY_STORAGE_KEY = 'signacraft_saved_project_v1';
 
 export default function App() {
   const initialTemplate = PREBUILT_TEMPLATES[0];
@@ -79,7 +80,7 @@ export default function App() {
   // Load from localStorage on mount if available
   useEffect(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEY);
+      const saved = localStorage.getItem(STORAGE_KEY) || localStorage.getItem(LEGACY_STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
         if (parsed.canvasConfig && parsed.layers) {
