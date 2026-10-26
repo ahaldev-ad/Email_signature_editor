@@ -834,9 +834,13 @@ export function CanvasWorkspace({
         .map((layer, index) => {
           const isSelected = selectedLayerIds.includes(layer.id);
           const isPrimary = layer.id === primarySelectedId;
-          const isBackground = layer.type === 'shape' && (layer.width >= width * 0.85 || layer.height >= height * 0.85);
+          const isDraggingThis = (dragState.isDragging && (dragState.layerId === layer.id || selectedLayerIds.includes(layer.id)));
+          const isResizingThis = (resizeState.isResizing && resizeState.layerId === layer.id);
 
-          const zIndex = isBackground ? 1 : (isSelected ? 100 : (index + 2));
+          // Authentic Layer Stacking Order:
+          // Visual stacking matches layers array position (index + 2) exactly.
+          // Only active mouse drag gestures temporarily elevate the interacting layer.
+          const zIndex = (isDraggingThis || isResizingThis) ? 990 : (index + 2);
 
           return (
             <div

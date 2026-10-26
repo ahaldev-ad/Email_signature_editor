@@ -3,7 +3,8 @@ import {
   Undo2, Redo2, ZoomIn, ZoomOut, Maximize2, Moon, Sun,
   Download, FileCode, Users, LayoutTemplate, HelpCircle,
   FolderOpen, Save, Sparkles, Check, ChevronDown, Code2, Keyboard,
-  Smartphone, Sliders, SlidersHorizontal, Menu, X, Edit3, PackagePlus
+  Smartphone, Sliders, SlidersHorizontal, Menu, X, Edit3, PackagePlus,
+  ShieldCheck
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { CANVAS_PRESETS } from '../utils/constants';
@@ -31,6 +32,7 @@ export function Toolbar({
   onOpenCodePreview,
   onOpenShortcuts,
   onOpenLogoAssetHub,
+  onOpenAntiRefreshModal,
   onCopySignature,
   onDownloadHtml,
   onCopyRawHtml,
@@ -101,6 +103,16 @@ export function Toolbar({
             title="Click to rename document"
             placeholder="Signature Name"
           />
+        </div>
+
+        {/* Anti-Refresh Protection Status Pill */}
+        <div
+          className="anti-refresh-badge hide-mobile"
+          onClick={onOpenAntiRefreshModal}
+          title="Anti-Refresh Protection Active (Cmd+R & F5 intercepted • Real-time Auto-Save active)"
+        >
+          <ShieldCheck size={12} color="#10b981" />
+          <span>Anti-Refresh Active</span>
         </div>
       </div>
 

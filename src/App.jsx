@@ -11,6 +11,7 @@ import { SetupGuideModal } from './components/SetupGuideModal';
 import { CodePreviewModal } from './components/CodePreviewModal';
 import { ShortcutsModal } from './components/ShortcutsModal';
 import LogoAssetModal from './components/LogoAssetModal';
+import AntiRefreshModal from './components/AntiRefreshModal';
 import {
   PREBUILT_TEMPLATES,
   DEFAULT_VARIABLES,
@@ -59,6 +60,7 @@ export default function App() {
   const [isCodePreviewOpen, setIsCodePreviewOpen] = useState(false);
   const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
   const [isLogoAssetOpen, setIsLogoAssetOpen] = useState(false);
+  const [isAntiRefreshOpen, setIsAntiRefreshOpen] = useState(false);
 
   // Toast notice
   const [toastMessage, setToastMessage] = useState('');
@@ -264,10 +266,72 @@ export default function App() {
     showToast(`Aligned ${selected.length} layers`);
   };
 
+  // Anti-Refresh Protection: Browser beforeunload warning
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      e.preventDefault();
+      e.returnValue = 'You have an active signature design in SigStudio. Are you sure you want to reload?';
+      return e.returnValue;
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, []);
+
   // Reorder layers
   const handleReorderLayers = (newLayers) => {
     setLayers(newLayers);
     pushHistory(canvasConfig, newLayers);
+  };
+
+  // Layer Arrange Stacking Functions
+  const handleBringToFront = (targetLayerId) => {
+    const targetId = targetLayerId || primarySelectedId;
+    if (!targetId) return;
+    const idx = layers.findIndex(l => l.id === targetId);
+    if (idx < 0 || idx === layers.length - 1) return;
+    const newLayers = [...layers];
+    const [moved] = newLayers.splice(idx, 1);
+    newLayers.push(moved);
+    handleReorderLayers(newLayers);
+    showToast(`Brought "${moved.name || 'Layer'}" to front`);
+  };
+
+  const handleBringForward = (targetLayerId) => {
+    const targetId = targetLayerId || primarySelectedId;
+    if (!targetId) return;
+    const idx = layers.findIndex(l => l.id === targetId);
+    if (idx < 0 || idx >= layers.length - 1) return;
+    const newLayers = [...layers];
+    const [moved] = newLayers.splice(idx, 1);
+    newLayers.splice(idx + 1, 0, moved);
+    handleReorderLayers(newLayers);
+    showToast(`Moved "${moved.name || 'Layer'}" forward`);
+  };
+
+  const handleSendBackward = (targetLayerId) => {
+    const targetId = targetLayerId || primarySelectedId;
+    if (!targetId) return;
+    const idx = layers.findIndex(l => l.id === targetId);
+    const minIdx = (layers[0] && layers[0].locked && layers[0].type === 'shape') ? 1 : 0;
+    if (idx <= minIdx) return;
+    const newLayers = [...layers];
+    const [moved] = newLayers.splice(idx, 1);
+    newLayers.splice(idx - 1, 0, moved);
+    handleReorderLayers(newLayers);
+    showToast(`Moved "${moved.name || 'Layer'}" backward`);
+  };
+
+  const handleSendToBack = (targetLayerId) => {
+    const targetId = targetLayerId || primarySelectedId;
+    if (!targetId) return;
+    const idx = layers.findIndex(l => l.id === targetId);
+    const minIdx = (layers[0] && layers[0].locked && layers[0].type === 'shape') ? 1 : 0;
+    if (idx <= minIdx) return;
+    const newLayers = [...layers];
+    const [moved] = newLayers.splice(idx, 1);
+    newLayers.splice(minIdx, 0, moved);
+    handleReorderLayers(newLayers);
+    showToast(`Sent "${moved.name || 'Layer'}" to back`);
   };
 
   // Add new layer from tool palette
@@ -727,6 +791,17 @@ export default function App() {
     };
 
     const handleGlobalKeyDown = (e) => {
+      // 0. Anti-Refresh Protection: Intercept accidental Cmd+R, Ctrl+R, F5 (even during input focus)
+      if (
+        ((e.key === 'r' || e.key === 'R') && (e.metaKey || e.ctrlKey)) ||
+        e.key === 'F5'
+      ) {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsAntiRefreshOpen(true);
+        return;
+      }
+
       // 1. STRICT SAFETY GUARD: When user is typing inside ANY input, textarea, or Inspector panel,
       // NEVER delete element or hijack typing keys!
       if (isInputField(e.target) || isInputField(document.activeElement)) {
@@ -775,7 +850,27 @@ export default function App() {
         return;
       }
 
-      // 7. Escape: Deselect / Exit Pen Tool / Close Modals
+      // 7. Layer Arrange: Bring Forward / Send Backward / To Front / To Back
+      if (e.key === ']' && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        if (e.shiftKey) {
+          handleBringToFront();
+        } else {
+          handleBringForward();
+        }
+        return;
+      }
+      if (e.key === '[' && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        if (e.shiftKey) {
+          handleSendToBack();
+        } else {
+          handleSendBackward();
+        }
+        return;
+      }
+
+      // 8. Escape: Deselect / Exit Pen Tool / Close Modals
       if (e.key === 'Escape') {
         e.preventDefault();
         if (activeTool === 'pen') {
@@ -789,6 +884,7 @@ export default function App() {
         setIsCodePreviewOpen(false);
         setIsShortcutsOpen(false);
         setIsLogoAssetOpen(false);
+        setIsAntiRefreshOpen(false);
         return;
       }
 
@@ -886,6 +982,7 @@ export default function App() {
         onOpenCodePreview={() => setIsCodePreviewOpen(true)}
         onOpenShortcuts={() => setIsShortcutsOpen(true)}
         onOpenLogoAssetHub={() => setIsLogoAssetOpen(true)}
+        onOpenAntiRefreshModal={() => setIsAntiRefreshOpen(true)}
         onCopySignature={handleCopySignature}
         onDownloadHtml={handleDownloadHtml}
         onCopyRawHtml={handleCopyRawHtml}
@@ -963,6 +1060,7 @@ export default function App() {
           {dockTab === 'inspector' ? (
             <InspectorPanel
               layer={selectedLayer}
+              layers={layers}
               selectedLayers={selectedLayers}
               selectedLayerIds={selectedLayerIds}
               onUpdateLayer={handleUpdateLayer}
@@ -970,6 +1068,10 @@ export default function App() {
               onAlignSelected={handleAlignSelected}
               onDeleteSelected={handleDeleteSelected}
               onDuplicateSelected={handleDuplicateSelected}
+              onBringToFront={handleBringToFront}
+              onBringForward={handleBringForward}
+              onSendBackward={handleSendBackward}
+              onSendToBack={handleSendToBack}
               canvasConfig={canvasConfig}
               setCanvasConfig={setCanvasConfig}
               onOpenLogoAssetHub={() => setIsLogoAssetOpen(true)}
@@ -1038,6 +1140,15 @@ export default function App() {
       <ShortcutsModal
         isOpen={isShortcutsOpen}
         onClose={() => setIsShortcutsOpen(false)}
+      />
+
+      {/* Anti-Refresh Protection Intercept Modal */}
+      <AntiRefreshModal
+        isOpen={isAntiRefreshOpen}
+        onClose={() => setIsAntiRefreshOpen(false)}
+        docName={docName}
+        layersCount={layers.length}
+        onExportJson={handleExportJson}
       />
 
       {/* Floating Toast Notification */}

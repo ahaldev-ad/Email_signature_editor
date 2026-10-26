@@ -831,9 +831,42 @@ input:focus, select:focus, textarea:focus {
   gap: 4px;
   opacity: 0.6;
 }
+.layer-item.dragging {
+  opacity: 0.35;
+  border-style: dashed;
+  border-color: var(--accent-indigo);
+}
+.layer-item.drag-over {
+  border-top: 2px solid var(--accent-cyan);
+  background: rgba(56, 189, 248, 0.12);
+  transform: translateY(-2px);
+}
 .layer-item:hover .layer-actions,
 .layer-item.active .layer-actions {
   opacity: 1;
+}
+
+/* Anti-Refresh Protection Status Badge */
+.anti-refresh-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 20px;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #10b981;
+  user-select: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+.anti-refresh-badge:hover {
+  background: rgba(16, 185, 129, 0.22);
+  border-color: rgba(16, 185, 129, 0.5);
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.25);
 }
 
 /* MODALS */

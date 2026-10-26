@@ -4,7 +4,8 @@ import {
   Maximize, Minimize, Link2, Upload, Sparkles, Sliders,
   Italic, Underline, Palette, Lock, Unlock, CaseUpper, PenTool,
   Layers as LayersIcon, AlignStartVertical, AlignCenterVertical, AlignEndVertical,
-  Copy, Trash2, QrCode, Star, Activity, Feather
+  Copy, Trash2, QrCode, Star, Activity, Feather,
+  ChevronUp, ChevronDown, ChevronsUp, ChevronsDown
 } from 'lucide-react';
 import {
   EMAIL_SAFE_FONTS,
@@ -26,6 +27,7 @@ const SAMPLE_AVATARS = [
 
 export function InspectorPanel({
   layer,
+  layers = [],
   selectedLayers = [],
   selectedLayerIds = [],
   onUpdateLayer,
@@ -33,6 +35,10 @@ export function InspectorPanel({
   onAlignSelected,
   onDeleteSelected,
   onDuplicateSelected,
+  onBringToFront,
+  onBringForward,
+  onSendBackward,
+  onSendToBack,
   canvasConfig,
   setCanvasConfig,
   onOpenLogoAssetHub
@@ -305,6 +311,64 @@ export function InspectorPanel({
             </span>
           </div>
         </div>
+
+        {/* Arrange & Layer Stacking (Z-Index) */}
+        {(() => {
+          const currentIdx = layers.findIndex(l => l.id === layer.id);
+          const total = layers.length;
+          return (
+            <div style={{ marginTop: 10, paddingTop: 8, borderTop: '1px solid var(--border-subtle)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+                <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)' }}>Layer Stacking (Z-Index)</span>
+                <span style={{ fontSize: 10, color: 'var(--text-dim)', fontFamily: 'var(--font-mono)' }}>
+                  {currentIdx >= 0 ? `Level ${currentIdx + 1} of ${total}` : ''}
+                </span>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 4 }}>
+                <button
+                  className="tool-btn"
+                  style={{ width: 'auto', padding: '5px 4px', fontSize: 10, flexDirection: 'column', gap: 2, height: 'auto' }}
+                  onClick={() => onBringToFront && onBringToFront(layer.id)}
+                  disabled={currentIdx === total - 1}
+                  title="Bring to Front (Cmd/Ctrl + Shift + ])"
+                >
+                  <ChevronsUp size={13} />
+                  <span>To Front</span>
+                </button>
+                <button
+                  className="tool-btn"
+                  style={{ width: 'auto', padding: '5px 4px', fontSize: 10, flexDirection: 'column', gap: 2, height: 'auto' }}
+                  onClick={() => onBringForward && onBringForward(layer.id)}
+                  disabled={currentIdx === total - 1}
+                  title="Bring Forward (Cmd/Ctrl + ])"
+                >
+                  <ChevronUp size={13} />
+                  <span>Forward</span>
+                </button>
+                <button
+                  className="tool-btn"
+                  style={{ width: 'auto', padding: '5px 4px', fontSize: 10, flexDirection: 'column', gap: 2, height: 'auto' }}
+                  onClick={() => onSendBackward && onSendBackward(layer.id)}
+                  disabled={currentIdx <= 0}
+                  title="Send Backward (Cmd/Ctrl + [)"
+                >
+                  <ChevronDown size={13} />
+                  <span>Backward</span>
+                </button>
+                <button
+                  className="tool-btn"
+                  style={{ width: 'auto', padding: '5px 4px', fontSize: 10, flexDirection: 'column', gap: 2, height: 'auto' }}
+                  onClick={() => onSendToBack && onSendToBack(layer.id)}
+                  disabled={currentIdx <= 0}
+                  title="Send to Back (Cmd/Ctrl + Shift + [)"
+                >
+                  <ChevronsDown size={13} />
+                  <span>To Back</span>
+                </button>
+              </div>
+            </div>
+          );
+        })()}
       </div>
 
       {/* TEXT SPECIFIC CONTROLS */}

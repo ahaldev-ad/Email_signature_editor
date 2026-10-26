@@ -35,7 +35,9 @@ export function ShortcutsModal({ isOpen, onClose }) {
         { key: 'Ctrl/Cmd + Y', desc: 'Redo change (or Cmd+Shift+Z)' },
         { key: 'Ctrl/Cmd + D', desc: 'Duplicate selected element(s)' },
         { key: 'Delete / Backspace', desc: 'Delete selected element(s)' },
-        { key: 'Arrow Keys', desc: 'Nudge element(s) by 1px (Shift: 10px)' },
+        { key: 'Ctrl/Cmd + ]', desc: 'Bring Layer Forward (Shift: Bring to Front)' },
+        { key: 'Ctrl/Cmd + [', desc: 'Send Layer Backward (Shift: Send to Back)' },
+        { key: 'Ctrl/Cmd + R / F5', desc: 'Protected by Anti-Refresh Shield' },
         { key: 'Enter / Double Click', desc: 'Finish open Bezier pen path' },
         { key: 'Escape', desc: 'Deselect all / Exit Pen tool / Close modal' }
       ]

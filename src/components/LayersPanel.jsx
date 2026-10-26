@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import {
   Eye, EyeOff, Lock, Unlock, Trash2, Copy,
-  ArrowUp, ArrowDown, Type, Image as ImageIcon,
-  Minus, RectangleHorizontal, Square, Share2, Layers, PenTool,
-  QrCode, Activity, Star, Feather
+  ArrowUp, ArrowDown, ChevronsUp, ChevronsDown, GripVertical,
+  Type, Image as ImageIcon, Minus, RectangleHorizontal, Square,
+  Share2, Layers, PenTool, QrCode, Activity, Star, Feather
 } from 'lucide-react';
 
 export function LayersPanel({
@@ -18,6 +18,8 @@ export function LayersPanel({
   onReorderLayers
 }) {
   const [editingNameId, setEditingNameId] = useState(null);
+  const [draggedIdx, setDraggedIdx] = useState(null);
+  const [dragOverIdx, setDragOverIdx] = useState(null);
 
   // Return icon for layer type
   const getLayerIcon = (type) => {
@@ -59,6 +61,62 @@ export function LayersPanel({
     onReorderLayers(newLayers);
   };
 
+  // Move layer to the very top of stack
+  const handleBringToTop = (index, e) => {
+    e.stopPropagation();
+    if (index === layers.length - 1) return;
+    const newLayers = [...layers];
+    const [moved] = newLayers.splice(index, 1);
+    newLayers.push(moved);
+    onReorderLayers(newLayers);
+  };
+
+  // Move layer to bottom of stack (above locked background at 0 if present)
+  const handleSendToBottom = (index, e) => {
+    e.stopPropagation();
+    const minIdx = (layers[0] && layers[0].locked && layers[0].type === 'shape') ? 1 : 0;
+    if (index <= minIdx) return;
+    const newLayers = [...layers];
+    const [moved] = newLayers.splice(index, 1);
+    newLayers.splice(minIdx, 0, moved);
+    onReorderLayers(newLayers);
+  };
+
+  // HTML5 Drag & Drop handlers
+  const handleDragStart = (e, originalIdx) => {
+    setDraggedIdx(originalIdx);
+    e.dataTransfer.setData('text/plain', String(originalIdx));
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleDragOver = (e, originalIdx) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    if (dragOverIdx !== originalIdx) {
+      setDragOverIdx(originalIdx);
+    }
+  };
+
+  const handleDrop = (e, targetOriginalIdx) => {
+    e.preventDefault();
+    if (draggedIdx === null || draggedIdx === targetOriginalIdx) {
+      setDraggedIdx(null);
+      setDragOverIdx(null);
+      return;
+    }
+    const newLayers = [...layers];
+    const [moved] = newLayers.splice(draggedIdx, 1);
+    newLayers.splice(targetOriginalIdx, 0, moved);
+    onReorderLayers(newLayers);
+    setDraggedIdx(null);
+    setDragOverIdx(null);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedIdx(null);
+    setDragOverIdx(null);
+  };
+
   // Reverse list so top layers display at top of panel like Photoshop
   const reversedLayers = [...layers].map((layer, originalIdx) => ({ layer, originalIdx })).reverse();
 
@@ -83,7 +141,12 @@ export function LayersPanel({
           return (
             <div
               key={layer.id}
-              className={`layer-item ${isSelected ? 'active' : ''}`}
+              className={`layer-item ${isSelected ? 'active' : ''} ${draggedIdx === originalIdx ? 'dragging' : ''} ${dragOverIdx === originalIdx ? 'drag-over' : ''}`}
+              draggable={!layer.locked}
+              onDragStart={(e) => handleDragStart(e, originalIdx)}
+              onDragOver={(e) => handleDragOver(e, originalIdx)}
+              onDrop={(e) => handleDrop(e, originalIdx)}
+              onDragEnd={handleDragEnd}
               onClick={(e) => {
                 if (e.shiftKey && setSelectedLayerIds) {
                   if (selectedLayerIds.includes(layer.id)) {
@@ -97,8 +160,13 @@ export function LayersPanel({
                 }
               }}
             >
-              {/* Left: Icon & Name */}
+              {/* Left: Drag Handle, Icon & Name */}
               <div className="layer-left">
+                {!layer.locked && (
+                  <span title="Drag to reorder layer stack" style={{ display: 'flex', alignItems: 'center' }}>
+                    <GripVertical size={13} color="var(--text-dim)" style={{ cursor: 'grab', flexShrink: 0 }} />
+                  </span>
+                )}
                 {getLayerIcon(layer.type)}
 
                 {isEditingName ? (
@@ -111,39 +179,63 @@ export function LayersPanel({
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') setEditingNameId(null);
                     }}
-                    style={{ fontSize: 12, padding: '1px 4px', width: 130 }}
+                    style={{ fontSize: 12, padding: '1px 4px', width: 110 }}
                   />
                 ) : (
                   <span
                     onDoubleClick={() => setEditingNameId(layer.id)}
                     title="Double-click to rename"
-                    style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 130 }}
+                    style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 110 }}
                   >
                     {layer.name || 'Untitled Layer'}
                   </span>
                 )}
               </div>
 
-              {/* Right: Actions (Visibility, Lock, Order, Duplicate, Delete) */}
+              {/* Right: Actions (Order buttons, Visibility, Lock, Duplicate, Delete) */}
               <div className="layer-actions">
-                {/* Reorder Buttons */}
+                {/* Bring to Top */}
                 <button
                   className="tool-btn"
-                  style={{ width: 20, height: 20 }}
+                  style={{ width: 19, height: 19 }}
+                  disabled={originalIdx === layers.length - 1}
+                  onClick={(e) => handleBringToTop(originalIdx, e)}
+                  title="Bring to Top (Front)"
+                >
+                  <ChevronsUp size={12} />
+                </button>
+
+                {/* Move 1 Up */}
+                <button
+                  className="tool-btn"
+                  style={{ width: 19, height: 19 }}
                   disabled={originalIdx === layers.length - 1}
                   onClick={(e) => handleMoveUp(originalIdx, e)}
                   title="Move Layer Up"
                 >
-                  <ArrowUp size={12} />
+                  <ArrowUp size={11} />
                 </button>
+
+                {/* Move 1 Down */}
                 <button
                   className="tool-btn"
-                  style={{ width: 20, height: 20 }}
+                  style={{ width: 19, height: 19 }}
                   disabled={originalIdx === 0}
                   onClick={(e) => handleMoveDown(originalIdx, e)}
                   title="Move Layer Down"
                 >
-                  <ArrowDown size={12} />
+                  <ArrowDown size={11} />
+                </button>
+
+                {/* Send to Bottom */}
+                <button
+                  className="tool-btn"
+                  style={{ width: 19, height: 19 }}
+                  disabled={originalIdx === 0}
+                  onClick={(e) => handleSendToBottom(originalIdx, e)}
+                  title="Send to Bottom (Back)"
+                >
+                  <ChevronsDown size={12} />
                 </button>
 
                 {/* Visibility Toggle */}
