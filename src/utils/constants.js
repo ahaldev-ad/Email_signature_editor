@@ -1640,6 +1640,157 @@ export const ELEMENT_PACKS = [
     ]
   },
   {
+    id: 'contact_email_pack',
+    category: 'Contact & Info',
+    name: '✉️ Direct Email Line',
+    desc: 'Clean email line with mail icon and interactive mailto: link',
+    layers: [
+      {
+        id: 'email_line',
+        name: 'Email Contact',
+        type: 'text',
+        x: 140,
+        y: 65,
+        width: 280,
+        height: 20,
+        text: '✉️ {Email}',
+        fontFamily: "Arial, Helvetica, sans-serif",
+        fontSize: 12,
+        fontWeight: '500',
+        color: '#0284c7',
+        linkUrl: 'mailto:{Email}',
+        locked: false,
+        visible: true
+      }
+    ]
+  },
+  {
+    id: 'contact_phone_pack',
+    category: 'Contact & Info',
+    name: '📞 Phone & Mobile Line',
+    desc: 'Office phone and direct mobile lines with tel: links',
+    layers: [
+      {
+        id: 'phone_line',
+        name: 'Phone & Mobile',
+        type: 'text',
+        x: 140,
+        y: 88,
+        width: 300,
+        height: 20,
+        text: '📞 {Phone}   •   📱 {Mobile}',
+        fontFamily: "Arial, Helvetica, sans-serif",
+        fontSize: 11.5,
+        fontWeight: '500',
+        color: '#334155',
+        linkUrl: 'tel:{Phone}',
+        locked: false,
+        visible: true
+      }
+    ]
+  },
+  {
+    id: 'contact_chat_whatsapp_pack',
+    category: 'Contact & Info',
+    name: '💬 WhatsApp Live Chat Pill',
+    desc: 'High-conversion WhatsApp button with WhatsApp brand green',
+    layers: [
+      {
+        id: 'whatsapp_pill',
+        name: 'WhatsApp Live Chat',
+        type: 'button',
+        x: 140,
+        y: 115,
+        width: 175,
+        height: 30,
+        text: '💬 Chat on WhatsApp',
+        bgColor: '#25D366',
+        textColor: '#ffffff',
+        borderRadius: 16,
+        fontSize: 11,
+        fontWeight: '700',
+        linkUrl: 'https://wa.me/1234567890',
+        locked: false,
+        visible: true
+      }
+    ]
+  },
+  {
+    id: 'contact_location_map_pack',
+    category: 'Contact & Info',
+    name: '📍 HQ Office & Map Pin',
+    desc: 'Physical address with location pin and direct Google Maps link',
+    layers: [
+      {
+        id: 'location_line',
+        name: 'HQ Office Location',
+        type: 'text',
+        x: 140,
+        y: 115,
+        width: 340,
+        height: 22,
+        text: '📍 {Address}',
+        fontFamily: "Arial, Helvetica, sans-serif",
+        fontSize: 11,
+        fontWeight: '400',
+        color: '#64748b',
+        linkUrl: 'https://maps.google.com/?q={Address}',
+        locked: false,
+        visible: true
+      }
+    ]
+  },
+  {
+    id: 'contact_website_pack',
+    category: 'Contact & Info',
+    name: '🌐 Corporate Website & Portal',
+    desc: 'Official company website link with globe icon',
+    layers: [
+      {
+        id: 'website_line',
+        name: 'Corporate Website',
+        type: 'text',
+        x: 140,
+        y: 138,
+        width: 260,
+        height: 20,
+        text: '🌐 {Website}',
+        fontFamily: "Arial, Helvetica, sans-serif",
+        fontSize: 12,
+        fontWeight: '500',
+        color: '#4f46e5',
+        linkUrl: '{Website}',
+        locked: false,
+        visible: true
+      }
+    ]
+  },
+  {
+    id: 'contact_complete_grid',
+    category: 'Contact & Info',
+    name: '📋 Complete 5-Icon Contact Block',
+    desc: 'All basic contact icons (Email, Phone, WhatsApp, Location, Website) in a cohesive block',
+    layers: [
+      {
+        id: 'contact_block_all',
+        name: '5-Icon Contact Stack',
+        type: 'text',
+        x: 140,
+        y: 65,
+        width: 380,
+        height: 58,
+        text: '✉️ {Email}   •   📞 {Phone}\n🌐 {Website}   •   📍 {Address}',
+        fontFamily: "Arial, Helvetica, sans-serif",
+        fontSize: 11.5,
+        lineHeight: 1.6,
+        fontWeight: '400',
+        color: '#475569',
+        locked: false,
+        visible: true
+      }
+    ]
+  },
+  {
     id: 'eco_green_notice',
     category: 'Disclaimers',
     name: 'Eco Green Printing Notice',

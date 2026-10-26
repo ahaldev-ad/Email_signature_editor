@@ -595,6 +595,147 @@ export default function App() {
         };
         break;
 
+      case 'contact_email':
+        newLayer = {
+          id,
+          name: 'Email Contact',
+          type: 'text',
+          x: 140,
+          y: 75,
+          width: 260,
+          height: 22,
+          text: '✉️ {Email}',
+          fontFamily: "Arial, Helvetica, sans-serif",
+          fontSize: 12,
+          fontWeight: '500',
+          color: '#334155',
+          linkUrl: 'mailto:{Email}',
+          locked: false,
+          visible: true
+        };
+        break;
+
+      case 'contact_phone':
+        newLayer = {
+          id,
+          name: 'Phone Contact',
+          type: 'text',
+          x: 140,
+          y: 98,
+          width: 240,
+          height: 22,
+          text: '📞 {Phone}',
+          fontFamily: "Arial, Helvetica, sans-serif",
+          fontSize: 12,
+          fontWeight: '500',
+          color: '#334155',
+          linkUrl: 'tel:{Phone}',
+          locked: false,
+          visible: true
+        };
+        break;
+
+      case 'contact_chat':
+        newLayer = {
+          id,
+          name: 'WhatsApp Live Chat',
+          type: 'button',
+          x: 140,
+          y: 122,
+          width: 175,
+          height: 30,
+          text: '💬 Chat on WhatsApp',
+          bgColor: '#25D366',
+          textColor: '#ffffff',
+          borderRadius: 15,
+          fontSize: 11,
+          fontWeight: '600',
+          linkUrl: 'https://wa.me/1234567890',
+          locked: false,
+          visible: true
+        };
+        break;
+
+      case 'contact_location':
+        newLayer = {
+          id,
+          name: 'Office Location',
+          type: 'text',
+          x: 140,
+          y: 122,
+          width: 320,
+          height: 22,
+          text: '📍 {Address}',
+          fontFamily: "Arial, Helvetica, sans-serif",
+          fontSize: 11.5,
+          fontWeight: '400',
+          color: '#64748b',
+          linkUrl: 'https://maps.google.com/?q={Address}',
+          locked: false,
+          visible: true
+        };
+        break;
+
+      case 'contact_website':
+        newLayer = {
+          id,
+          name: 'Company Website',
+          type: 'text',
+          x: 140,
+          y: 144,
+          width: 240,
+          height: 22,
+          text: '🌐 {Website}',
+          fontFamily: "Arial, Helvetica, sans-serif",
+          fontSize: 12,
+          fontWeight: '500',
+          color: '#6366f1',
+          linkUrl: '{Website}',
+          locked: false,
+          visible: true
+        };
+        break;
+
+      case 'contact_mobile':
+        newLayer = {
+          id,
+          name: 'Mobile Number',
+          type: 'text',
+          x: 140,
+          y: 122,
+          width: 240,
+          height: 22,
+          text: '📱 {Mobile}',
+          fontFamily: "Arial, Helvetica, sans-serif",
+          fontSize: 12,
+          fontWeight: '500',
+          color: '#334155',
+          linkUrl: 'tel:{Mobile}',
+          locked: false,
+          visible: true
+        };
+        break;
+
+      case 'contact_stack':
+        newLayer = {
+          id,
+          name: 'Full Contact Block',
+          type: 'text',
+          x: 140,
+          y: 75,
+          width: 360,
+          height: 52,
+          text: '✉️ {Email}   •   📞 {Phone}\n🌐 {Website}   •   📍 {Address}',
+          fontFamily: "Arial, Helvetica, sans-serif",
+          fontSize: 11.5,
+          lineHeight: 1.6,
+          fontWeight: '400',
+          color: '#475569',
+          locked: false,
+          visible: true
+        };
+        break;
+
       default:
         break;
     }
@@ -698,14 +839,99 @@ export default function App() {
 
   // Apply team member from batch modal
   const handleApplyTeamMember = (member) => {
-    setVariables(prev => ({ ...prev, ...member }));
-    if (member.AvatarUrl) {
-      const avatarLayer = layers.find(l => l.type === 'image');
-      if (avatarLayer) {
-        handleUpdateLayer(avatarLayer.id, { url: member.AvatarUrl });
-      }
-    }
-    showToast(`Applied signature for ${member.FullName}`);
+    // 1. Update variables dictionary
+    setVariables(prev => {
+      const nextVars = {
+        ...prev,
+        FullName: member.FullName || prev.FullName,
+        JobTitle: member.JobTitle || prev.JobTitle,
+        Company: member.Company || prev.Company,
+        Email: member.Email || prev.Email,
+        Phone: member.Phone || prev.Phone,
+        Website: member.Website || prev.Website,
+        AvatarUrl: member.AvatarUrl || prev.AvatarUrl,
+        Address: member.Address || prev.Address,
+        Mobile: member.Mobile || prev.Mobile || member.Phone || prev.Phone
+      };
+      return nextVars;
+    });
+
+    // 2. Intelligently sync layers (avatar photo, static text fields if present)
+    setLayers(prevLayers => {
+      const updated = prevLayers.map(l => {
+        // Image / Headshot / Avatar replacement
+        if (member.AvatarUrl && (
+          l.type === 'image' ||
+          l.id?.toLowerCase().includes('avatar') ||
+          l.id?.toLowerCase().includes('photo') ||
+          l.id?.toLowerCase().includes('profile') ||
+          l.id?.toLowerCase().includes('headshot') ||
+          l.name?.toLowerCase().includes('avatar') ||
+          l.name?.toLowerCase().includes('photo') ||
+          l.name?.toLowerCase().includes('headshot') ||
+          l.name?.toLowerCase().includes('profile')
+        )) {
+          return { ...l, url: member.AvatarUrl };
+        }
+
+        // Text layer synchronizations
+        if (l.type === 'text') {
+          let text = l.text;
+          const id = (l.id || '').toLowerCase();
+          const name = (l.name || '').toLowerCase();
+
+          // If text does not contain dynamic variable brackets, intelligently replace hardcoded values:
+          if (id.includes('name') || name.includes('name')) {
+            if (!text.includes('{')) {
+              text = member.FullName || text;
+            }
+          } else if (id.includes('title') || name.includes('title') || name.includes('role') || name.includes('job')) {
+            if (!text.includes('{')) {
+              text = `${member.JobTitle || ''}${member.Company ? ' | ' + member.Company : ''}`;
+            }
+          } else if (id.includes('contact') || name.includes('contact') || name.includes('info')) {
+            if (!text.includes('{')) {
+              const parts = [];
+              if (member.Email) parts.push(`✉️ ${member.Email}`);
+              if (member.Phone) parts.push(`📞 ${member.Phone}`);
+              let contactStr = parts.join('  •  ');
+              if (member.Website) contactStr += `\n🌐 ${member.Website}`;
+              text = contactStr || text;
+            }
+          } else if (id.includes('email') || name.includes('email') || text.includes('@')) {
+            if (!text.includes('{') && member.Email) {
+              text = text.startsWith('✉️ ') ? `✉️ ${member.Email}` : (text.startsWith('Email: ') ? `Email: ${member.Email}` : member.Email);
+            }
+          } else if (id.includes('phone') || name.includes('phone') || id.includes('mobile')) {
+            if (!text.includes('{') && member.Phone) {
+              text = text.startsWith('📞 ') ? `📞 ${member.Phone}` : (text.startsWith('Tel: ') ? `Tel: ${member.Phone}` : member.Phone);
+            }
+          } else if (id.includes('website') || name.includes('website') || id.includes('web')) {
+            if (!text.includes('{') && member.Website) {
+              text = text.startsWith('🌐 ') ? `🌐 ${member.Website}` : member.Website;
+            }
+          } else if (id.includes('company') || name.includes('company')) {
+            if (!text.includes('{') && member.Company) {
+              text = member.Company;
+            }
+          }
+          return { ...l, text };
+        }
+
+        // Button elements (like WhatsApp or email CTA)
+        if (l.type === 'button') {
+          if (l.linkUrl && l.linkUrl.includes('mailto:') && member.Email) {
+            return { ...l, linkUrl: `mailto:${member.Email}` };
+          }
+        }
+
+        return l;
+      });
+      pushHistory(canvasConfig, updated);
+      return updated;
+    });
+
+    showToast(`Applied team signature for ${member.FullName}!`);
   };
 
   // Copy rich HTML signature to clipboard
@@ -1115,7 +1341,9 @@ export default function App() {
         isOpen={isBatchOpen}
         onClose={() => setIsBatchOpen(false)}
         variables={variables}
+        setVariables={setVariables}
         onApplyMember={handleApplyTeamMember}
+        onApplyTeamMember={handleApplyTeamMember}
         canvasConfig={canvasConfig}
         layers={layers}
       />

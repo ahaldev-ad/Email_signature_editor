@@ -6,12 +6,14 @@ import { compileSignatureToHtml, downloadHtmlFile } from '../utils/compiler';
 export function BatchTeamModal({
   isOpen,
   onClose,
-  variables,
+  variables = {},
   setVariables,
   canvasConfig,
   layers,
-  onApplyTeamMember
+  onApplyTeamMember,
+  onApplyMember
 }) {
+  const applyFn = onApplyTeamMember || onApplyMember;
   const [activeTab, setActiveTab] = useState('team'); // 'team' | 'variables'
   const [teamList, setTeamList] = useState(SAMPLE_TEAM_DATA);
   const [search, setSearch] = useState('');
@@ -25,10 +27,10 @@ export function BatchTeamModal({
   const [newMember, setNewMember] = useState({
     FullName: '',
     JobTitle: '',
-    Company: variables.Company || 'Company Inc.',
+    Company: variables?.Company || 'Company Inc.',
     Email: '',
     Phone: '',
-    Website: variables.Website || 'https://yourwebsite.com',
+    Website: variables?.Website || 'https://yourwebsite.com',
     AvatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80'
   });
 
@@ -38,16 +40,22 @@ export function BatchTeamModal({
   const handleAddVariable = () => {
     if (!newVarKey.trim()) return;
     const cleanKey = newVarKey.trim().replace(/[^a-zA-Z0-9_]/g, '');
-    setVariables(prev => ({ ...prev, [cleanKey]: newVarVal }));
+    if (setVariables) {
+      setVariables(prev => ({ ...prev, [cleanKey]: newVarVal }));
+    }
     setNewVarKey('');
     setNewVarVal('');
   };
 
   // Delete variable
   const handleDeleteVariable = (key) => {
-    const updated = { ...variables };
-    delete updated[key];
-    setVariables(updated);
+    if (setVariables) {
+      setVariables(prev => {
+        const updated = { ...prev };
+        delete updated[key];
+        return updated;
+      });
+    }
   };
 
   // Add new team member to list
@@ -255,9 +263,22 @@ export function BatchTeamModal({
                       onChange={(e) => setNewMember({ ...newMember, Phone: e.target.value })}
                     />
                   </div>
-                  <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
+                  <div style={{ display: 'flex', gap: 8, marginTop: 4, flexWrap: 'wrap' }}>
                     <button className="btn-primary" style={{ fontSize: 11, padding: '5px 12px' }} onClick={handleAddMember}>
                       Save Member
+                    </button>
+                    <button
+                      className="btn-secondary"
+                      style={{ fontSize: 11, padding: '5px 12px', borderColor: 'var(--accent-indigo)', color: 'var(--accent-cyan)' }}
+                      onClick={() => {
+                        if (!newMember.FullName.trim()) return;
+                        handleAddMember();
+                        if (applyFn) applyFn(newMember);
+                        onClose();
+                      }}
+                    >
+                      <Sparkles size={12} color="#6366f1" />
+                      Save & Apply to Canvas
                     </button>
                     <button className="btn-secondary" style={{ fontSize: 11, padding: '5px 10px' }} onClick={() => setShowAddForm(false)}>
                       Cancel
@@ -302,7 +323,7 @@ export function BatchTeamModal({
                         className="btn-secondary"
                         style={{ fontSize: 11, padding: '4px 10px' }}
                         onClick={() => {
-                          onApplyTeamMember(member);
+                          if (applyFn) applyFn(member);
                           onClose();
                         }}
                       >

@@ -5,7 +5,8 @@ import {
   Italic, Underline, Palette, Lock, Unlock, CaseUpper, PenTool,
   Layers as LayersIcon, AlignStartVertical, AlignCenterVertical, AlignEndVertical,
   Copy, Trash2, QrCode, Star, Activity, Feather,
-  ChevronUp, ChevronDown, ChevronsUp, ChevronsDown
+  ChevronUp, ChevronDown, ChevronsUp, ChevronsDown,
+  Mail, Phone, MessageCircle, MapPin, Globe, Smartphone, Calendar, Building2, Clock
 } from 'lucide-react';
 import {
   EMAIL_SAFE_FONTS,
@@ -556,13 +557,169 @@ export function InspectorPanel({
             </div>
           </div>
 
+          {/* CONTACT ICONS & QUICK FORMATS */}
+          <div style={{ marginTop: 10, padding: '8px 10px', background: 'rgba(56, 189, 248, 0.05)', border: '1px solid rgba(56, 189, 248, 0.2)', borderRadius: 6 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+              <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--accent-cyan)' }}>
+                Contact Icons & Quick Presets:
+              </span>
+              <Mail size={12} color="var(--accent-cyan)" />
+            </div>
+            <div style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 6 }}>
+              1-click to prepend icon and link scheme:
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 4 }}>
+              <button
+                className="btn-secondary"
+                style={{ fontSize: 10, padding: '4px 6px', justifyContent: 'center' }}
+                onClick={() => {
+                  const curr = layer.text || '';
+                  const clean = curr.replace(/^[✉️📞💬📍🌐📱📅🏢🕒]\s*/u, '');
+                  onUpdateLayer(layer.id, {
+                    text: `✉️ ${clean || '{Email}'}`,
+                    linkUrl: layer.linkUrl || 'mailto:{Email}'
+                  });
+                }}
+                title="Email icon + mailto: link"
+              >
+                ✉️ Email
+              </button>
+
+              <button
+                className="btn-secondary"
+                style={{ fontSize: 10, padding: '4px 6px', justifyContent: 'center' }}
+                onClick={() => {
+                  const curr = layer.text || '';
+                  const clean = curr.replace(/^[✉️📞💬📍🌐📱📅🏢🕒]\s*/u, '');
+                  onUpdateLayer(layer.id, {
+                    text: `📞 ${clean || '{Phone}'}`,
+                    linkUrl: layer.linkUrl || 'tel:{Phone}'
+                  });
+                }}
+                title="Phone icon + tel: link"
+              >
+                📞 Phone
+              </button>
+
+              <button
+                className="btn-secondary"
+                style={{ fontSize: 10, padding: '4px 6px', justifyContent: 'center' }}
+                onClick={() => {
+                  const curr = layer.text || '';
+                  const clean = curr.replace(/^[✉️📞💬📍🌐📱📅🏢🕒]\s*/u, '');
+                  onUpdateLayer(layer.id, {
+                    text: `💬 ${clean || 'Chat on WhatsApp'}`,
+                    linkUrl: layer.linkUrl || 'https://wa.me/1234567890'
+                  });
+                }}
+                title="WhatsApp / Chat icon + WhatsApp link"
+              >
+                💬 Chat
+              </button>
+
+              <button
+                className="btn-secondary"
+                style={{ fontSize: 10, padding: '4px 6px', justifyContent: 'center' }}
+                onClick={() => {
+                  const curr = layer.text || '';
+                  const clean = curr.replace(/^[✉️📞💬📍🌐📱📅🏢🕒]\s*/u, '');
+                  onUpdateLayer(layer.id, {
+                    text: `📍 ${clean || '{Address}'}`,
+                    linkUrl: layer.linkUrl || 'https://maps.google.com/?q={Address}'
+                  });
+                }}
+                title="Location icon + Google Maps link"
+              >
+                📍 Location
+              </button>
+
+              <button
+                className="btn-secondary"
+                style={{ fontSize: 10, padding: '4px 6px', justifyContent: 'center' }}
+                onClick={() => {
+                  const curr = layer.text || '';
+                  const clean = curr.replace(/^[✉️📞💬📍🌐📱📅🏢🕒]\s*/u, '');
+                  onUpdateLayer(layer.id, {
+                    text: `🌐 ${clean || '{Website}'}`,
+                    linkUrl: layer.linkUrl || '{Website}'
+                  });
+                }}
+                title="Website globe icon + link"
+              >
+                🌐 Website
+              </button>
+
+              <button
+                className="btn-secondary"
+                style={{ fontSize: 10, padding: '4px 6px', justifyContent: 'center' }}
+                onClick={() => {
+                  const curr = layer.text || '';
+                  const clean = curr.replace(/^[✉️📞💬📍🌐📱📅🏢🕒]\s*/u, '');
+                  onUpdateLayer(layer.id, {
+                    text: `📱 ${clean || '{Mobile}'}`,
+                    linkUrl: layer.linkUrl || 'tel:{Mobile}'
+                  });
+                }}
+                title="Mobile icon + tel: link"
+              >
+                📱 Mobile
+              </button>
+
+              <button
+                className="btn-secondary"
+                style={{ fontSize: 10, padding: '4px 6px', justifyContent: 'center' }}
+                onClick={() => {
+                  const curr = layer.text || '';
+                  const clean = curr.replace(/^[✉️📞💬📍🌐📱📅🏢🕒]\s*/u, '');
+                  onUpdateLayer(layer.id, {
+                    text: `📅 ${clean || 'Book 15-Min Call'}`,
+                    linkUrl: layer.linkUrl || 'https://calendly.com'
+                  });
+                }}
+                title="Calendar icon + meeting booking link"
+              >
+                📅 Calendar
+              </button>
+
+              <button
+                className="btn-secondary"
+                style={{ fontSize: 10, padding: '4px 6px', justifyContent: 'center' }}
+                onClick={() => {
+                  const curr = layer.text || '';
+                  const clean = curr.replace(/^[✉️📞💬📍🌐📱📅🏢🕒]\s*/u, '');
+                  onUpdateLayer(layer.id, {
+                    text: `🏢 ${clean || '{Company}'}`
+                  });
+                }}
+                title="Office building icon"
+              >
+                🏢 Office
+              </button>
+
+              <button
+                className="btn-secondary"
+                style={{ fontSize: 10, padding: '4px 6px', justifyContent: 'center' }}
+                onClick={() => {
+                  const curr = layer.text || '';
+                  const clean = curr.replace(/^[✉️📞💬📍🌐📱📅🏢🕒]\s*/u, '');
+                  onUpdateLayer(layer.id, {
+                    text: `🕒 ${clean || 'Mon - Fri 9:00 AM - 6:00 PM'}`
+                  });
+                }}
+                title="Office hours icon"
+              >
+                🕒 Hours
+              </button>
+            </div>
+          </div>
+
           {/* Dynamic Variable Tags */}
-          <div style={{ marginTop: 6 }}>
+          <div style={{ marginTop: 8 }}>
             <span style={{ fontSize: 11, color: 'var(--text-dim)', marginBottom: 4, display: 'block' }}>
               Insert Variable Tag:
             </span>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-              {['FullName', 'JobTitle', 'Company', 'Email', 'Phone', 'Website'].map(tag => (
+              {['FullName', 'JobTitle', 'Company', 'Email', 'Phone', 'Website', 'Address', 'Mobile'].map(tag => (
                 <button
                   key={tag}
                   style={{
@@ -833,29 +990,92 @@ export function InspectorPanel({
           </div>
 
           {/* Quick Preset Buttons */}
-          <div style={{ marginTop: 4 }}>
-            <span style={{ fontSize: 11, color: 'var(--text-dim)', display: 'block', marginBottom: 4 }}>Quick Style:</span>
-            <div style={{ display: 'flex', gap: 6 }}>
+          <div style={{ marginTop: 8 }}>
+            <span style={{ fontSize: 11, color: 'var(--text-dim)', display: 'block', marginBottom: 4 }}>Contact CTA Presets:</span>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 4 }}>
               <button
                 className="btn-secondary"
-                style={{ fontSize: 10, padding: '3px 8px' }}
-                onClick={() => onUpdateLayer(layer.id, { bgColor: '#6366f1', textColor: '#fff', borderRadius: 6, borderWidth: 0 })}
+                style={{ fontSize: 10, padding: '4px 6px', justifyContent: 'center' }}
+                onClick={() => onUpdateLayer(layer.id, {
+                  text: '💬 WhatsApp Chat',
+                  bgColor: '#25D366',
+                  textColor: '#ffffff',
+                  borderRadius: 18,
+                  borderWidth: 0,
+                  linkUrl: 'https://wa.me/1234567890'
+                })}
               >
-                Solid Fill
+                💬 WhatsApp
               </button>
               <button
                 className="btn-secondary"
-                style={{ fontSize: 10, padding: '3px 8px' }}
-                onClick={() => onUpdateLayer(layer.id, { bgColor: 'transparent', textColor: '#6366f1', borderRadius: 6, borderWidth: 1.5, borderColor: '#6366f1' })}
+                style={{ fontSize: 10, padding: '4px 6px', justifyContent: 'center' }}
+                onClick={() => onUpdateLayer(layer.id, {
+                  text: '✉️ Email Me',
+                  bgColor: '#0284c7',
+                  textColor: '#ffffff',
+                  borderRadius: 6,
+                  borderWidth: 0,
+                  linkUrl: 'mailto:{Email}'
+                })}
               >
-                Outline Ghost
+                ✉️ Email Me
               </button>
               <button
                 className="btn-secondary"
-                style={{ fontSize: 10, padding: '3px 8px' }}
-                onClick={() => onUpdateLayer(layer.id, { bgColor: '#25D366', textColor: '#fff', borderRadius: 20, borderWidth: 0 })}
+                style={{ fontSize: 10, padding: '4px 6px', justifyContent: 'center' }}
+                onClick={() => onUpdateLayer(layer.id, {
+                  text: '📞 Call Directly',
+                  bgColor: '#059669',
+                  textColor: '#ffffff',
+                  borderRadius: 6,
+                  borderWidth: 0,
+                  linkUrl: 'tel:{Phone}'
+                })}
               >
-                WhatsApp Pill
+                📞 Call Us
+              </button>
+              <button
+                className="btn-secondary"
+                style={{ fontSize: 10, padding: '4px 6px', justifyContent: 'center' }}
+                onClick={() => onUpdateLayer(layer.id, {
+                  text: '📍 Get Directions',
+                  bgColor: '#e11d48',
+                  textColor: '#ffffff',
+                  borderRadius: 6,
+                  borderWidth: 0,
+                  linkUrl: 'https://maps.google.com/?q={Address}'
+                })}
+              >
+                📍 Map Location
+              </button>
+              <button
+                className="btn-secondary"
+                style={{ fontSize: 10, padding: '4px 6px', justifyContent: 'center' }}
+                onClick={() => onUpdateLayer(layer.id, {
+                  text: '🌐 Visit Website',
+                  bgColor: '#4f46e5',
+                  textColor: '#ffffff',
+                  borderRadius: 6,
+                  borderWidth: 0,
+                  linkUrl: '{Website}'
+                })}
+              >
+                🌐 Website
+              </button>
+              <button
+                className="btn-secondary"
+                style={{ fontSize: 10, padding: '4px 6px', justifyContent: 'center' }}
+                onClick={() => onUpdateLayer(layer.id, {
+                  text: '📅 Book Meeting',
+                  bgColor: '#6366f1',
+                  textColor: '#ffffff',
+                  borderRadius: 20,
+                  borderWidth: 0,
+                  linkUrl: 'https://calendly.com'
+                })}
+              >
+                📅 Calendly
               </button>
             </div>
           </div>
