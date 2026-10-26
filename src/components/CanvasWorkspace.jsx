@@ -834,8 +834,8 @@ export function CanvasWorkspace({
         .map((layer, index) => {
           const isSelected = selectedLayerIds ? selectedLayerIds.includes(layer.id) : false;
           const isPrimary = layer.id === primarySelectedId;
-          const isDraggingThis = (dragState?.isDragging && (dragState.layerId === layer.id || selectedLayerIds?.includes(layer.id)));
-          const isResizingThis = (resizeState?.isResizing && resizeState.layerId === layer.id);
+          const isDraggingThis = !!(dragging && (dragging.id === layer.id || (dragging.initPositions && dragging.initPositions[layer.id])));
+          const isResizingThis = !!(resizing && resizing.id === layer.id);
 
           // Authentic Layer Stacking Order:
           // Visual stacking matches layers array position (index + 2) exactly.
